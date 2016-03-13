@@ -61,7 +61,7 @@ class DiffChunk extends ListItem
   # Returns the path as {String}.
   patchPath: ->
     path.join(
-      atom.project.getRepositories()[0]?.getWorkingDirectory(),
+      git.defaultAtomRepo()?.getWorkingDirectory(),
       '.git/atomatigit_diff_patch'
     )
 

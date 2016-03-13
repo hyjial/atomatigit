@@ -10,3 +10,4 @@ getPath = ->
 
 module.exports =
   defaultRepo: new Git(getPath())
+  defaultAtomRepo: -> atom.project.getRepositories()[0]

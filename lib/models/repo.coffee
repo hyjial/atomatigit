@@ -26,7 +26,7 @@ class Repo extends Model
       @commitList.reload()
       @currentBranch.reload()
 
-    atomGit = atom.project.getRepositories()[0]
+    atomGit = git.defaultAtomRepo()
     @subscriptions.add(atomGit.onDidChangeStatus(@reload)) if atomGit?
 
   destroy: =>
@@ -56,12 +56,12 @@ class Repo extends Model
   # Returns the commit message file path as {String}.
   commitMessagePath: ->
     path.join(
-      atom.project.getRepositories()[0]?.getWorkingDirectory(),
+      git.defaultAtomRepo()?.getWorkingDirectory(),
       '/.git/COMMIT_EDITMSG_ATOMATIGIT'
     )
 
   headRefsCount: ->
-    atom.project.getRepositories()[0]?.getReferences()?.heads?.length ? 0
+    git.defaultAtomRepo()?.getReferences()?.heads?.length ? 0
 
   fetch: ->
     git.defaultRepo.cmd 'fetch'
@@ -131,7 +131,7 @@ class Repo extends Model
     else
       atom.workspace.destroyActivePane()
     try fs.unlinkSync @commitMessagePath()
-    atom.project.getRepositories()[0]?.refreshStatus?()
+    git.defaultAtomRepo()?.refreshStatus?()
 
   # Internal: Commit the changes.
   completeCommit: =>
