@@ -6,10 +6,11 @@ path    = require 'path'
 
 ErrorView                   = require '../views/error-view'
 OutputView                  = require '../views/output-view'
-{Promise} = git             = require '../git'
+git                         = require '../git'
 {FileList}                  = require './files'
 {CurrentBranch, BranchList} = require './branches'
 {CommitList}                = require './commits'
+Promise                     = git.defaultRepo.Promise
 
 # Public: Offers access to core functionality regarding the git repository.
 class Repo extends Model
@@ -63,7 +64,7 @@ class Repo extends Model
     atom.project.getRepositories()[0]?.getReferences()?.heads?.length ? 0
 
   fetch: ->
-    git.cmd 'fetch'
+    git.defaultRepo.cmd 'fetch'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -72,13 +73,13 @@ class Repo extends Model
   #   @branchList.checkoutBranch
 
   stash: ->
-    git.cmd 'stash'
+    git.defaultRepo.cmd 'stash'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
 
   stashPop: ->
-    git.cmd 'stash pop'
+    git.defaultRepo.cmd 'stash pop'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -134,7 +135,7 @@ class Repo extends Model
 
   # Internal: Commit the changes.
   completeCommit: =>
-    git.commit @commitMessagePath()
+    git.defaultRepo.commit @commitMessagePath()
     .then @reload
     .then =>
       @trigger('complete')
@@ -146,7 +147,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Branch name'
       callback: (name) ->
-        git.cmd "checkout -b #{name}"
+        git.defaultRepo.cmd "checkout -b #{name}"
         .catch (error) -> new ErrorView(error)
         .done =>
           @trigger('complete')
@@ -156,7 +157,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Git command'
       callback: (command) =>
-        git.cmd command
+        git.defaultRepo.cmd command
         .then (output) -> new OutputView(output)
         .catch (error) -> new ErrorView(error)
         .done =>

@@ -10,10 +10,10 @@ ErrorView    = require '../../views/error-view'
 class BranchList extends List
   # Public: Reload the branch list.
   reload: ({silent}={}) =>
-    git.branches().then (branches) =>
+    git.defaultRepo.branches().then (branches) =>
       @reset()
       _.each branches, (branch) => @add new LocalBranch(branch)
-      git.remoteBranches().then (branches) =>
+      git.defaultRepo.remoteBranches().then (branches) =>
         _.each branches, (branch) => @add new RemoteBranch(branch)
         @select(@selectedIndex)
         @trigger('repaint') unless silent

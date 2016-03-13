@@ -56,7 +56,7 @@ class Branch extends ListItem
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    git.checkout @localName()
+    git.defaultRepo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

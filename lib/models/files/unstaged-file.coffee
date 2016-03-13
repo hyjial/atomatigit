@@ -9,7 +9,7 @@ class UnstagedFile extends File
   sortValue: 1
 
   unstage: =>
-    git.unstage(@path())
+    git.defaultRepo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -22,7 +22,7 @@ class UnstagedFile extends File
 
   loadDiff: =>
     return if @getMode() is 'D'
-    git.getDiff(@path())
+    git.defaultRepo.getDiff(@path())
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

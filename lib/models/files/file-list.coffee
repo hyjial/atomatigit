@@ -10,7 +10,7 @@ ErrorView     = require '../../views/error-view'
 class FileList extends List
   # Public: Reload the file list.
   reload: ({silent}={}) =>
-    git.status()
+    git.defaultRepo.status()
     .then (status) => @populate(status, silent)
     .catch (error) -> new ErrorView(error)
 

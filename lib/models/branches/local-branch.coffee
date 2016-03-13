@@ -24,10 +24,10 @@ class LocalBranch extends Branch
         @comparison = 'No upstream configured'
         return @trigger 'comparison-loaded'
       tracking_branch = @tracking_branch
-      git.cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
+      git.defaultRepo.cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
         number = +output.trim()
         comparison = @getComparisonString number, 'ahead of', tracking_branch if number isnt 0
-        git.cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
+        git.defaultRepo.cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
           number = +output.trim()
           if number isnt 0
             comparison += '<br>' if comparison isnt ''
@@ -42,10 +42,10 @@ class LocalBranch extends Branch
   # Returns {Promise}
   getTrackingBranch: (name) =>
     @tracking_branch = ''
-    git.cmd("config branch.#{name}.remote").then (output) =>
+    git.defaultRepo.cmd("config branch.#{name}.remote").then (output) =>
       output = output.trim()
       remote = "#{output}/"
-      git.cmd("config branch.#{name}.merge").then (output) =>
+      git.defaultRepo.cmd("config branch.#{name}.merge").then (output) =>
         @tracking_branch = remote + output.trim().replace('refs/heads/', '')
     .catch -> '' # Throws when there's no upstream configured. We handle that elsewhere.
 
@@ -66,7 +66,7 @@ class LocalBranch extends Branch
 
   # Public: Delete the branch.
   delete: =>
-    git.cmd 'branch', {D: true}, @getName()
+    git.defaultRepo.cmd 'branch', {D: true}, @getName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -77,7 +77,7 @@ class LocalBranch extends Branch
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    git.checkout @localName()
+    git.defaultRepo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -85,7 +85,7 @@ class LocalBranch extends Branch
   #
   # remote - The remote to push to as {String}.
   push: (remote='origin') =>
-    git.cmd 'push', [remote, @getName()]
+    git.defaultRepo.cmd 'push', [remote, @getName()]
     .then =>
       @trigger 'update'
       new OutputView('Pushing to remote repository successful')

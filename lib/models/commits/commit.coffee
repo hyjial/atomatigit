@@ -86,20 +86,20 @@ class Commit extends ListItem
 
   # Internal: Reset to this commit.
   reset: =>
-    git.reset @commitID()
+    git.defaultRepo.reset @commitID()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Hard reset to this commit.
   hardReset: =>
-    git.reset @commitID(), {hard: true}
+    git.defaultRepo.reset @commitID(), {hard: true}
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Show this commit.
   showCommit: =>
     if not @has('showMessage')
-      git.show @commitID(), format: 'full'
+      git.defaultRepo.show @commitID(), format: 'full'
       .then (data) =>
         @set('showMessage', @unicodify(data))
         @showCommit()

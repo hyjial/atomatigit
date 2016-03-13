@@ -12,7 +12,7 @@ class StagedFile extends File
 
   # Public: Unstage the changes made to this file.
   unstage: =>
-    git.unstage(@path())
+    git.defaultRepo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -33,7 +33,7 @@ class StagedFile extends File
   # Internal: Update the diff.
   loadDiff: =>
     return if @getMode() is 'D'
-    git.getDiff(@path(), {staged: true})
+    git.defaultRepo.getDiff(@path(), {staged: true})
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

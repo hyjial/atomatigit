@@ -35,7 +35,7 @@ class File extends ListItem
 
   # Public: Stage the changes made to this file.
   stage: =>
-    git.add(@path())
+    git.defaultRepo.add(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -69,7 +69,7 @@ class File extends ListItem
 
   # Public: Checkout the file to the index.
   checkout: =>
-    git.checkoutFile(@path())
+    git.defaultRepo.checkoutFile(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

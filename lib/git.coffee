@@ -8,4 +8,5 @@ getPath = ->
   else
     __dirname
 
-module.exports = new Git(getPath())
+module.exports =
+  defaultRepo: new Git(getPath())
