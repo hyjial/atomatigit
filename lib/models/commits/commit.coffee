@@ -105,7 +105,7 @@ class Commit extends ListItem
         @showCommit()
       .catch (error) -> new ErrorView(error)
     else
-      gitPath = atom.project?.getRepositories()[0]?.getPath() or atom.project?.getPath()
+      gitPath = atom.project?.getRepositories()[0]?.getPath()
       diffPath = path.join(gitPath, ".git/#{@commitID()}")
       fs.writeFileSync diffPath, @get('showMessage')
       atom.workspace.open(diffPath).then (editor) ->
