@@ -51,6 +51,9 @@ class Repo extends Model
   leaf: =>
     @activeList.leaf()
 
+  getRepoName: ->
+    git.defaultAtomRepo().getWorkingDirectory()
+
   # Internal: The commit message file path.
   #
   # Returns the commit message file path as {String}.

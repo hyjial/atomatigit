@@ -12,6 +12,7 @@ class RepoView extends View
   @content: (model) ->
     @div class: 'atomatigit', =>
       @div class: 'resize-handle', outlet: 'resizeHandle'
+      @h1 model.getRepoName()
       @subview 'currentBranchView', new CurrentBranchView(model)
 
       @ul class: 'list-inline tab-bar inset-panel', =>
