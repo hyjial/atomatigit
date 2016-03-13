@@ -1,4 +1,5 @@
 {CompositeDisposable} = require 'atom'
+git = require './git'
 Repo = RepoView = ErrorView = null
 
 module.exports =
@@ -40,7 +41,7 @@ module.exports =
 
   # Public: Toggle the atomatigit pane.
   toggle: ->
-    return @errorNoGitRepo() unless atom.project.getRepositories()[0]
+    return @errorNoGitRepo() unless git.defaultAtomRepo()
     @loadClasses() unless Repo and RepoView
     @repo ?= new Repo()
     if !@repoView?
