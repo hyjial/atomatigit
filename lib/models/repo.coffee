@@ -10,7 +10,7 @@ git                         = require '../git'
 {FileList}                  = require './files'
 {CurrentBranch, BranchList} = require './branches'
 {CommitList}                = require './commits'
-Promise                     = git.defaultRepo.Promise
+Promise                     = git.defaultRepo().Promise
 
 # Public: Offers access to core functionality regarding the git repository.
 class Repo extends Model
@@ -64,7 +64,7 @@ class Repo extends Model
     git.defaultAtomRepo()?.getReferences()?.heads?.length ? 0
 
   fetch: ->
-    git.defaultRepo.cmd 'fetch'
+    git.defaultRepo().cmd 'fetch'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -73,13 +73,13 @@ class Repo extends Model
   #   @branchList.checkoutBranch
 
   stash: ->
-    git.defaultRepo.cmd 'stash'
+    git.defaultRepo().cmd 'stash'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
 
   stashPop: ->
-    git.defaultRepo.cmd 'stash pop'
+    git.defaultRepo().cmd 'stash pop'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -135,7 +135,7 @@ class Repo extends Model
 
   # Internal: Commit the changes.
   completeCommit: =>
-    git.defaultRepo.commit @commitMessagePath()
+    git.defaultRepo().commit @commitMessagePath()
     .then @reload
     .then =>
       @trigger('complete')
@@ -147,7 +147,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Branch name'
       callback: (name) ->
-        git.defaultRepo.cmd "checkout -b #{name}"
+        git.defaultRepo().cmd "checkout -b #{name}"
         .catch (error) -> new ErrorView(error)
         .done =>
           @trigger('complete')
@@ -157,7 +157,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Git command'
       callback: (command) =>
-        git.defaultRepo.cmd command
+        git.defaultRepo().cmd command
         .then (output) -> new OutputView(output)
         .catch (error) -> new ErrorView(error)
         .done =>

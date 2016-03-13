@@ -12,7 +12,7 @@ class CommitList extends List
   # branch - The branch to reload the commits for as {Branch}.
   reload: (@branch, options={}) =>
     [@branch, options] = [null, @branch] if _.isPlainObject(@branch)
-    git.defaultRepo.log(@branch?.head() ? 'HEAD')
+    git.defaultRepo().log(@branch?.head() ? 'HEAD')
     .then (commits) =>
       @reset _.map(commits, (commit) -> new Commit(commit))
       @trigger('repaint') unless options.silent

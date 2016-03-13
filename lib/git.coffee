@@ -1,4 +1,5 @@
 Git = require 'promised-git'
+DefaultRepo = null
 
 getPath = ->
   if atom.project?.getRepositories()[0]
@@ -9,5 +10,9 @@ getPath = ->
     __dirname
 
 module.exports =
-  defaultRepo: new Git(getPath())
+  defaultRepo: ->
+    if not DefaultRepo?
+      DefaultRepo = new Git(getPath())
+    DefaultRepo
+
   defaultAtomRepo: -> atom.project.getRepositories()[0]

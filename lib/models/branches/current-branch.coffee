@@ -13,8 +13,8 @@ class CurrentBranch extends LocalBranch
 
   # Public: Reload the branch HEAD.
   reload: ({silent}={}) =>
-    git.defaultRepo.revParse('HEAD', 'abbrev-ref': true).then (@name) =>
-      git.defaultRepo.getCommit('HEAD').then (gitCommit) =>
+    git.defaultRepo().revParse('HEAD', 'abbrev-ref': true).then (@name) =>
+      git.defaultRepo().getCommit('HEAD').then (gitCommit) =>
         @commit = new Commit(gitCommit)
         if !silent
           @trigger 'repaint'
