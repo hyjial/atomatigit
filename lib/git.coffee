@@ -11,4 +11,7 @@ getPath = ->
 module.exports =
   defaultRepo: -> new Git(getPath())
 
-  defaultAtomRepo: -> atom.project.getRepositories()[0]
+  defaultAtomRepo: ->
+    dirs = atom.project.getDirectories()
+    console.log dirs
+    atom.project.repositoryForDirectory dirs[0]

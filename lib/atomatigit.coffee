@@ -50,10 +50,11 @@ module.exports =
       @repoView = null
     else
       r = git.defaultRepo()
-      ar = git.defaultAtomRepo()
-      @repo = new Repo(r, ar)
-      @repoView = new RepoView(@repo)
-      @repoView.InitPromise.then => @repoView.toggle()
+      arp = git.defaultAtomRepo()
+      arp.then (ar) =>
+        @repo = new Repo(r, ar)
+        @repoView = new RepoView(@repo)
+        @repoView.InitPromise.then => @repoView.toggle()
 
   # Internal: Destroy atomatigit instance.
   deactivate: ->
