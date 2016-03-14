@@ -44,14 +44,14 @@ module.exports =
     return @errorNoGitRepo() unless git.defaultAtomRepo()
     @loadClasses() unless Repo and RepoView
     if @repo? or @repoView?
-      console.log 'toggled'
       @repo?.destroy()
       @repoView?.destroy()
       @repo = null
       @repoView = null
     else
-      console.log 'untoggled'
-      @repo = new Repo()
+      r = git.defaultRepo()
+      ar = git.defaultAtomRepo()
+      @repo = new Repo(r, ar)
       @repoView = new RepoView(@repo)
       @repoView.InitPromise.then => @repoView.toggle()
 
