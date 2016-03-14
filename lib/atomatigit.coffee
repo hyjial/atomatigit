@@ -43,12 +43,17 @@ module.exports =
   toggle: ->
     return @errorNoGitRepo() unless git.defaultAtomRepo()
     @loadClasses() unless Repo and RepoView
-    @repo ?= new Repo()
-    if !@repoView?
+    if @repo? or @repoView?
+      console.log 'toggled'
+      @repo?.destroy()
+      @repoView?.destroy()
+      @repo = null
+      @repoView = null
+    else
+      console.log 'untoggled'
+      @repo = new Repo()
       @repoView = new RepoView(@repo)
       @repoView.InitPromise.then => @repoView.toggle()
-    else
-      @repoView.toggle()
 
   # Internal: Destroy atomatigit instance.
   deactivate: ->
