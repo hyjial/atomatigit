@@ -49,12 +49,16 @@ module.exports =
       @repo = null
       @repoView = null
     else
-      r = git.defaultRepo()
-      arp = git.defaultAtomRepo()
-      arp.then (ar) =>
-        @repo = new Repo(r, ar)
-        @repoView = new RepoView(@repo)
-        @repoView.InitPromise.then => @repoView.toggle()
+      p = git.curRepo()
+      if !p?
+        return @errorNoGitRepo()
+      else
+        p.then ({atomRepo, repo}) =>
+          if !atomRepo?
+            return @errorNoGitRepo()
+          @repo = new Repo(repo, atomRepo)
+          @repoView = new RepoView(@repo)
+          @repoView.InitPromise.then => @repoView.toggle()
 
   # Internal: Destroy atomatigit instance.
   deactivate: ->

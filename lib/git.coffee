@@ -1,5 +1,14 @@
 Git = require 'promised-git'
 
+getCurAtomRepo = ->
+  ed = atom.workspace.getActiveTextEditor()
+  if ed?
+    path = ed.getPath()
+    dirs = atom.project.getDirectories()
+    dir = dirs.find (d) -> d.contains path
+    if dir?
+       atom.project.repositoryForDirectory(dir)
+
 getPath = ->
   if atom.project?.getRepositories()[0]
     atom.project.getRepositories()[0].getWorkingDirectory()
@@ -13,5 +22,19 @@ module.exports =
 
   defaultAtomRepo: ->
     dirs = atom.project.getDirectories()
-    console.log dirs
     atom.project.repositoryForDirectory dirs[0]
+
+  curRepo: ->
+    noRepo =
+      atomRepo: null
+      repo: null
+    p = getCurAtomRepo()
+    if !p?
+      null
+    else
+      p.then (r) ->
+        if r?
+          atomRepo: r
+          repo: new Git(r.getWorkingDirectory())
+        else
+          noRepo
