@@ -1,7 +1,6 @@
 {$, View, TextEditorView} = require 'atom-space-pen-views'
 ErrorView = require './error-view'
 OutputView = require './output-view'
-git = require '../git'
 
 class InputView extends View
   @content: ({message}={}) ->

@@ -1,6 +1,5 @@
 _ = require 'lodash'
 
-git       = require '../../git'
 Diff      = require '../diffs/diff'
 ListItem  = require '../list-item'
 ErrorView = require '../../views/error-view'
@@ -9,7 +8,9 @@ class File extends ListItem
   # Public: Constructor
   #
   # path - The file path as {String}.
-  initialize: (file) ->
+  initialize: (file, repo, atomRepo) ->
+    @repo = repo
+    @atomRepo = atomRepo
     @set file
     @set diff: false
     @loadDiff()
@@ -35,7 +36,7 @@ class File extends ListItem
 
   # Public: Stage the changes made to this file.
   stage: =>
-    git.defaultRepo().add(@path())
+    @repo.add(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -43,7 +44,7 @@ class File extends ListItem
   #
   # diff - The diff to set the file diff to as {Diff}.
   setDiff: (diff) =>
-    @sublist = new Diff(diff)
+    @sublist = new Diff(diff, @repo, @atomRepo)
     @trigger 'change:diff'
 
   # Public: Toggle the diff visibility.
@@ -69,7 +70,7 @@ class File extends ListItem
 
   # Public: Checkout the file to the index.
   checkout: =>
-    git.defaultRepo().checkoutFile(@path())
+    @repo.checkoutFile(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

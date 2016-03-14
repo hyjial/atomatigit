@@ -1,4 +1,3 @@
-git         = require '../../git'
 LocalBranch = require './local-branch'
 {Commit}    = require '../commits'
 ErrorView   = require '../../views/error-view'
@@ -9,12 +8,13 @@ class CurrentBranch extends LocalBranch
   #
   # branchExisting - If the branch is existing as {Boolean}.
   initialize: (branchExisting) ->
+    super
     @reload() if branchExisting
 
   # Public: Reload the branch HEAD.
   reload: ({silent}={}) =>
-    git.defaultRepo().revParse('HEAD', 'abbrev-ref': true).then (@name) =>
-      git.defaultRepo().getCommit('HEAD').then (gitCommit) =>
+    @repo.revParse('HEAD', 'abbrev-ref': true).then (@name) =>
+      @repo.getCommit('HEAD').then (gitCommit) =>
         @commit = new Commit(gitCommit)
         if !silent
           @trigger 'repaint'

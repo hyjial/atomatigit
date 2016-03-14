@@ -1,4 +1,3 @@
-git        = require '../../git'
 Branch     = require './branch'
 ErrorView  = require '../../views/error-view'
 OutputView = require '../../views/output-view'
@@ -11,6 +10,7 @@ class LocalBranch extends Branch
 
   # Public: Constructor
   initialize: ->
+    super
     @compareCommits() if atom.config.get('atomatigit.display_commit_comparisons')
 
   # Internal: Compares this branches commits and stores it as {String}
@@ -24,10 +24,10 @@ class LocalBranch extends Branch
         @comparison = 'No upstream configured'
         return @trigger 'comparison-loaded'
       tracking_branch = @tracking_branch
-      git.defaultRepo().cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
+      @repo.cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
         number = +output.trim()
         comparison = @getComparisonString number, 'ahead of', tracking_branch if number isnt 0
-        git.defaultRepo().cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
+        @repo.cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
           number = +output.trim()
           if number isnt 0
             comparison += '<br>' if comparison isnt ''
@@ -42,10 +42,10 @@ class LocalBranch extends Branch
   # Returns {Promise}
   getTrackingBranch: (name) =>
     @tracking_branch = ''
-    git.defaultRepo().cmd("config branch.#{name}.remote").then (output) =>
+    @repo.cmd("config branch.#{name}.remote").then (output) =>
       output = output.trim()
       remote = "#{output}/"
-      git.defaultRepo().cmd("config branch.#{name}.merge").then (output) =>
+      @repo.cmd("config branch.#{name}.merge").then (output) =>
         @tracking_branch = remote + output.trim().replace('refs/heads/', '')
     .catch -> '' # Throws when there's no upstream configured. We handle that elsewhere.
 
@@ -66,7 +66,7 @@ class LocalBranch extends Branch
 
   # Public: Delete the branch.
   delete: =>
-    git.defaultRepo().cmd 'branch', {D: true}, @getName()
+    @repo.cmd 'branch', {D: true}, @getName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -77,7 +77,7 @@ class LocalBranch extends Branch
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    git.defaultRepo().checkout @localName()
+    @repo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -85,7 +85,7 @@ class LocalBranch extends Branch
   #
   # remote - The remote to push to as {String}.
   push: (remote='origin') =>
-    git.defaultRepo().cmd 'push', [remote, @getName()]
+    @repo.cmd 'push', [remote, @getName()]
     .then =>
       @trigger 'update'
       new OutputView('Pushing to remote repository successful')

@@ -16,18 +16,20 @@ Promise                     = git.defaultRepo().Promise
 class Repo extends Model
   # Public: Constructor
   initialize: ->
-    @fileList      = new FileList []
-    @branchList    = new BranchList []
-    @commitList    = new CommitList []
-    @currentBranch = new CurrentBranch(@headRefsCount() > 0)
+    @atomRepo = git.defaultAtomRepo()
+    @repo = git.defaultRepo()
+
+    @fileList      = new FileList [], {'repo': @repo}
+    @branchList    = new BranchList [], {'repo': @repo}
+    @commitList    = new CommitList [], {'repo': @repo, 'atomRepo': @atomRepo}
+    @currentBranch = new CurrentBranch(@headRefsCount() > 0, {'repo': @repo})
 
     @subscriptions = new CompositeDisposable
     @listenTo @branchList, 'repaint', =>
       @commitList.reload()
       @currentBranch.reload()
 
-    atomGit = git.defaultAtomRepo()
-    @subscriptions.add(atomGit.onDidChangeStatus(@reload)) if atomGit?
+    @subscriptions.add(atomRepo.onDidChangeStatus(@reload)) if atomRepo?
 
   destroy: =>
     @stopListening()
@@ -59,15 +61,15 @@ class Repo extends Model
   # Returns the commit message file path as {String}.
   commitMessagePath: ->
     path.join(
-      git.defaultAtomRepo()?.getWorkingDirectory(),
+      @atomRepo?.getWorkingDirectory(),
       '/.git/COMMIT_EDITMSG_ATOMATIGIT'
     )
 
   headRefsCount: ->
-    git.defaultAtomRepo()?.getReferences()?.heads?.length ? 0
+    @atomRepo?.getReferences()?.heads?.length ? 0
 
   fetch: ->
-    git.defaultRepo().cmd 'fetch'
+    @repo.cmd 'fetch'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -76,13 +78,13 @@ class Repo extends Model
   #   @branchList.checkoutBranch
 
   stash: ->
-    git.defaultRepo().cmd 'stash'
+    @repo.cmd 'stash'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
 
   stashPop: ->
-    git.defaultRepo().cmd 'stash pop'
+    @repo.cmd 'stash pop'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -138,7 +140,7 @@ class Repo extends Model
 
   # Internal: Commit the changes.
   completeCommit: =>
-    git.defaultRepo().commit @commitMessagePath()
+    @repo.commit @commitMessagePath()
     .then @reload
     .then =>
       @trigger('complete')

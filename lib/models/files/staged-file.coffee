@@ -1,4 +1,3 @@
-git       = require '../../git'
 File      = require './file'
 ErrorView = require '../../views/error-view'
 
@@ -12,7 +11,7 @@ class StagedFile extends File
 
   # Public: Unstage the changes made to this file.
   unstage: =>
-    git.defaultRepo().unstage(@path())
+    @repo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -33,7 +32,7 @@ class StagedFile extends File
   # Internal: Update the diff.
   loadDiff: =>
     return if @getMode() is 'D'
-    git.defaultRepo().getDiff(@path(), {staged: true})
+    @repo.getDiff(@path(), {staged: true})
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

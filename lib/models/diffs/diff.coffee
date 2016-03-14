@@ -21,9 +21,11 @@ class Diff extends List
   # arguments - {Object}
   #   :raw    - The raw diff as {String}.
   #   :chunks - The individual chunks as {Array} of {String}s.
-  constructor: ({@raw, chunks}={}) ->
+  constructor: ({@raw, chunks}={}, repo, atomRepo) ->
+    @repo = repo
+    @atomRepo = atomRepo
     @extractHeader()
-    super _.map(chunks, (chunk) => {chunk: chunk, header: @header})
+    super _.map(chunks, (chunk) => {chunk: chunk, header: @header, repo: @repo, atomRepo: @atomRepo})
 
     @select -1
 

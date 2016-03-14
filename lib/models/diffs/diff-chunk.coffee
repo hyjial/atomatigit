@@ -2,7 +2,6 @@ _    = require 'lodash'
 fs   = require 'fs'
 path = require 'path'
 
-git       = require '../../git'
 DiffLine  = require './diff-line'
 ListItem  = require '../list-item'
 ErrorView = require '../../views/error-view'
@@ -17,7 +16,9 @@ class DiffChunk extends ListItem
   # arguments - {Object}
   #   :header - The diff header used for patch generation as {String}.
   #   :chunk  - The chunk as {String}.
-  initialize: ({@header, chunk}={}) ->
+  initialize: ({@header, chunk}={}, repo, atomRepo) ->
+    @repo = repo
+    @atomRepo = atomRepo
     @lines = _.map @splitIntoLines(chunk.trim()), (line) ->
       new DiffLine(line: line)
 
@@ -38,21 +39,21 @@ class DiffChunk extends ListItem
   # Public: Revert this chunk.
   kill: =>
     fs.writeFileSync(@patchPath(), @patch())
-    git.defaultRepo().cmd "apply --reverse '#{@patchPath()}'"
+    @repo.cmd "apply --reverse '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Stage this chunk.
   stage: =>
     fs.writeFileSync(@patchPath(), @patch())
-    git.defaultRepo().cmd "apply --cached '#{@patchPath()}'"
+    @repo.cmd "apply --cached '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Unstage this chunk.
   unstage: =>
     fs.writeFileSync(@patchPath(), @patch())
-    git.defaultRepo().cmd "apply --cached --reverse '#{@patchPath()}'"
+    @repo.cmd "apply --cached --reverse '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -61,7 +62,7 @@ class DiffChunk extends ListItem
   # Returns the path as {String}.
   patchPath: ->
     path.join(
-      git.defaultAtomRepo()?.getWorkingDirectory(),
+      @atomRepo.getWorkingDirectory(),
       '.git/atomatigit_diff_patch'
     )
 

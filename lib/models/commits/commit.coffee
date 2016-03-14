@@ -2,7 +2,6 @@ _    = require 'lodash'
 fs   = require 'fs-plus'
 path = require 'path'
 
-git       = require '../../git'
 ListItem  = require '../list-item'
 ErrorView = require '../../views/error-view'
 
@@ -16,8 +15,10 @@ class Commit extends ListItem
   # Public: Constructor.
   #
   # gitCommit - The promisedgit commit object as {Object}.
-  initialize: (gitCommit) ->
+  initialize: (gitCommit, repo, atomRepo) ->
     super()
+    @atomRepo = atomRepo
+    @repo = repo
     if not _.isString(gitCommit) and _.isObject(gitCommit)
       @set 'author', gitCommit.author
       @set 'id', gitCommit.ref
@@ -86,26 +87,26 @@ class Commit extends ListItem
 
   # Internal: Reset to this commit.
   reset: =>
-    git.defaultRepo().reset @commitID()
+    @repo.reset @commitID()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Hard reset to this commit.
   hardReset: =>
-    git.defaultRepo().reset @commitID(), {hard: true}
+    @repo.reset @commitID(), {hard: true}
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Show this commit.
   showCommit: =>
     if not @has('showMessage')
-      git.defaultRepo().show @commitID(), format: 'full'
+      @repo.show @commitID(), format: 'full'
       .then (data) =>
         @set('showMessage', @unicodify(data))
         @showCommit()
       .catch (error) -> new ErrorView(error)
     else
-      gitPath = atom.project?.getRepositories()[0]?.getPath()
+      gitPath = @atomRepo.getPath()
       diffPath = path.join(gitPath, ".git/#{@commitID()}")
       fs.writeFileSync diffPath, @get('showMessage')
       atom.workspace.open(diffPath).then (editor) ->

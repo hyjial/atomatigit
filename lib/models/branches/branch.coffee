@@ -1,9 +1,12 @@
-git       = require '../../git'
 ListItem  = require '../list-item'
 Commit    = require '../commits/commit'
 ErrorView = require '../../views/error-view'
 
 class Branch extends ListItem
+  initialize: (attr, options) ->
+    super
+    @repo = options.repo
+
   # Public: Return the property 'name'.
   #
   # Returns the name as {String}.
@@ -56,7 +59,7 @@ class Branch extends ListItem
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    git.defaultRepo().checkout @localName()
+    @repo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

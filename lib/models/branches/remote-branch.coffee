@@ -1,4 +1,3 @@
-git       = require '../../git'
 Branch    = require './branch'
 ErrorView = require '../../views/error-view'
 
@@ -11,7 +10,7 @@ class RemoteBranch extends Branch
   #
   # Returns the [Description] as {String}.
   delete: =>
-    git.defaultRepo().cmd "push -f #{@remoteName()} :#{@localName()}"
+    @repo.cmd "push -f #{@remoteName()} :#{@localName()}"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

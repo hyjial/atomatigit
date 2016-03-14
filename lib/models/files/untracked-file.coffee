@@ -1,4 +1,3 @@
-git  = require '../../git'
 File = require './file'
 
 module.exports =

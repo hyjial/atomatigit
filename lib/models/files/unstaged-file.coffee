@@ -1,5 +1,4 @@
 File      = require './file'
-git       = require '../../git'
 ErrorView = require '../../views/error-view'
 
 module.exports =
@@ -9,7 +8,7 @@ class UnstagedFile extends File
   sortValue: 1
 
   unstage: =>
-    git.defaultRepo().unstage(@path())
+    @repo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -22,7 +21,7 @@ class UnstagedFile extends File
 
   loadDiff: =>
     return if @getMode() is 'D'
-    git.defaultRepo().getDiff(@path())
+    @repo.getDiff(@path())
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

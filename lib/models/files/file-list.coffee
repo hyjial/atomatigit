@@ -1,6 +1,5 @@
 _ = require 'lodash'
 
-git           = require '../../git'
 List          = require '../list'
 StagedFile    = require './staged-file'
 UnstagedFile  = require './unstaged-file'
@@ -8,9 +7,14 @@ UntrackedFile = require './untracked-file'
 ErrorView     = require '../../views/error-view'
 
 class FileList extends List
+  initialize: (models, options) ->
+    super
+    @repo = options.repo
+    @atomRepo = options.atomRepo
+
   # Public: Reload the file list.
   reload: ({silent}={}) =>
-    git.defaultRepo().status()
+    @repo.status()
     .then (status) => @populate(status, silent)
     .catch (error) -> new ErrorView(error)
 
@@ -44,6 +48,6 @@ class FileList extends List
   # files - The files to populate the list with as {Array}.
   # Klass - The Klass these paths are to be tracked as as {Object}.
   populateList: (files, Klass) =>
-    _.each files, (file) => @add new Klass(file)
+    _.each files, (file) => @add new Klass(file, @repo, @atomRepo)
 
 module.exports = FileList
