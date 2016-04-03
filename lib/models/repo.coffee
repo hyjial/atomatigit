@@ -162,7 +162,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Git command'
       callback: (command) =>
-        git.defaultRepo().cmd command
+        @repo.cmd command
         .then (output) -> new OutputView(output)
         .catch (error) -> new ErrorView(error)
         .done =>
