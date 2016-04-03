@@ -17,6 +17,9 @@ getPath = ->
   else
     __dirname
 
+class AtomatiGitRepo
+  constructor: (@promisedRepo, @atomRepo) ->
+
 module.exports =
   defaultRepo: -> new Git(getPath())
 
@@ -25,16 +28,13 @@ module.exports =
     atom.project.repositoryForDirectory dirs[0]
 
   curRepo: ->
-    noRepo =
-      atomRepo: null
-      repo: null
     p = getCurAtomRepo()
     if !p?
       null
     else
       p.then (r) ->
         if r?
-          atomRepo: r
-          repo: new Git(r.getWorkingDirectory())
+          promisedRepo = new Git(r.getWorkingDirectory())
+          new AtomatiGitRepo(promisedRepo, r)
         else
-          noRepo
+          null
