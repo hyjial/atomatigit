@@ -136,7 +136,7 @@ class Repo extends Model
     else
       atom.workspace.destroyActivePane()
     try fs.unlinkSync @commitMessagePath()
-    git.defaultAtomRepo()?.refreshStatus?()
+    @atomRepo?.refreshStatus?()
 
   # Internal: Commit the changes.
   completeCommit: =>
@@ -152,7 +152,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Branch name'
       callback: (name) ->
-        git.defaultRepo().cmd "checkout -b #{name}"
+        @repo.cmd "checkout -b #{name}"
         .catch (error) -> new ErrorView(error)
         .done =>
           @trigger('complete')
