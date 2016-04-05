@@ -32,11 +32,26 @@ class AtomatiGitRepo
   refreshStatus: ->
     @atomRepo.refreshStatus()
 
+  add: (file) ->
+    @promisedRepo.add file
+
+  checkoutFile: (file) ->
+    @promisedRepo.checkoutFile file
+
   cmd: (args...) ->
     @promisedRepo.cmd args...
 
   commit: (args...) ->
     @promisedRepo.commit args...
+
+  getDiff: (args...) ->
+    @promisedRepo.getDiff args...
+
+  status: ->
+    @promisedRepo.status()
+
+  unstage: (file) ->
+    @promisedRepo.unstage file
 
 
 module.exports =

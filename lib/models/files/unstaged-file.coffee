@@ -8,7 +8,7 @@ class UnstagedFile extends File
   sortValue: 1
 
   unstage: =>
-    @repo.unstage(@path())
+    @atomatiGitRepo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -21,7 +21,7 @@ class UnstagedFile extends File
 
   loadDiff: =>
     return if @getMode() is 'D'
-    @repo.getDiff(@path())
+    @atomatiGitRepo.getDiff(@path())
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

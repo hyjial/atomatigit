@@ -8,9 +8,9 @@ class File extends ListItem
   # Public: Constructor
   #
   # path - The file path as {String}.
-  initialize: (file, repo, atomRepo) ->
-    @repo = repo
-    @atomRepo = atomRepo
+  initialize: (file, @atomatiGitRepo) ->
+    @repo = @atomatiGitRepo.promisedRepo
+    @atomRepo = @atomatiGitRepo.atomRepo
     @set file
     @set diff: false
     @loadDiff()
@@ -36,7 +36,7 @@ class File extends ListItem
 
   # Public: Stage the changes made to this file.
   stage: =>
-    @repo.add(@path())
+    @atomatiGitRepo.add(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -70,7 +70,7 @@ class File extends ListItem
 
   # Public: Checkout the file to the index.
   checkout: =>
-    @repo.checkoutFile(@path())
+    @atomatiGitRepo.checkoutFile(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

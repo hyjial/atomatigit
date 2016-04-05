@@ -9,12 +9,11 @@ ErrorView     = require '../../views/error-view'
 class FileList extends List
   initialize: (models, options) ->
     super
-    @repo = options.repo
-    @atomRepo = options.atomRepo
+    @atomatiGitRepo = options.atomatiGitRepo
 
   # Public: Reload the file list.
   reload: ({silent}={}) =>
-    @repo.status()
+    @atomatiGitRepo.status()
     .then (status) => @populate(status, silent)
     .catch (error) -> new ErrorView(error)
 
@@ -48,6 +47,6 @@ class FileList extends List
   # files - The files to populate the list with as {Array}.
   # Klass - The Klass these paths are to be tracked as as {Object}.
   populateList: (files, Klass) =>
-    _.each files, (file) => @add new Klass(file, @repo, @atomRepo)
+    _.each files, (file) => @add new Klass(file, @atomatiGitRepo)
 
 module.exports = FileList

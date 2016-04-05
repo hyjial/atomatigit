@@ -11,7 +11,7 @@ class StagedFile extends File
 
   # Public: Unstage the changes made to this file.
   unstage: =>
-    @repo.unstage(@path())
+    @atomatiGitRepo.unstage(@path())
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -32,7 +32,7 @@ class StagedFile extends File
   # Internal: Update the diff.
   loadDiff: =>
     return if @getMode() is 'D'
-    @repo.getDiff(@path(), {staged: true})
+    @atomatiGitRepo.getDiff(@path(), {staged: true})
     .then (diff) => @setDiff(diff)
     .catch (error) -> new ErrorView(error)
 

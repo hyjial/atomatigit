@@ -19,7 +19,7 @@ class Repo extends Model
     @atomRepo = @atomatiGitRepo.atomRepo
     @repo = @atomatiGitRepo.promisedRepo
 
-    @fileList      = new FileList [], {'repo': @repo}
+    @fileList      = new FileList [], {'atomatiGitRepo': @atomatiGitRepo}
     @branchList    = new BranchList [], {'repo': @repo}
     @commitList    = new CommitList [], {'repo': @repo, 'atomRepo': @atomRepo}
     @currentBranch = new CurrentBranch(@headRefsCount() > 0, {'repo': @repo})
