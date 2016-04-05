@@ -29,7 +29,7 @@ class Repo extends Model
       @commitList.reload()
       @currentBranch.reload()
 
-    @subscriptions.add(atomRepo.onDidChangeStatus(@reload)) if atomRepo?
+    @subscriptions.add(@atomatiGitRepo.onDidChangeStatus(@reload))
 
   destroy: =>
     @stopListening()
@@ -54,22 +54,22 @@ class Repo extends Model
     @activeList.leaf()
 
   getRepoName: ->
-    @atomRepo.getWorkingDirectory()
+    @atomatiGitRepo.getWorkingDirectory()
 
   # Internal: The commit message file path.
   #
   # Returns the commit message file path as {String}.
   commitMessagePath: ->
     path.join(
-      @atomRepo?.getWorkingDirectory(),
+      @atomatiGitRepo.getWorkingDirectory(),
       '/.git/COMMIT_EDITMSG_ATOMATIGIT'
     )
 
   headRefsCount: ->
-    @atomRepo?.getReferences()?.heads?.length ? 0
+    @atomatiGitRepo.getReferences()?.heads?.length ? 0
 
   fetch: ->
-    @repo.cmd 'fetch'
+    @atomatiGitRepo.cmd 'fetch'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -78,13 +78,13 @@ class Repo extends Model
   #   @branchList.checkoutBranch
 
   stash: ->
-    @repo.cmd 'stash'
+    @atomatiGitRepo.cmd 'stash'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
 
   stashPop: ->
-    @repo.cmd 'stash pop'
+    @atomatiGitRepo.cmd 'stash pop'
     .catch (error) -> new ErrorView(error)
     .done =>
       @trigger('update')
@@ -136,11 +136,11 @@ class Repo extends Model
     else
       atom.workspace.destroyActivePane()
     try fs.unlinkSync @commitMessagePath()
-    @atomRepo?.refreshStatus?()
+    @atomatiGitRepo.refreshStatus()
 
   # Internal: Commit the changes.
   completeCommit: =>
-    @repo.commit @commitMessagePath()
+    @atomatiGitRepo.commit @commitMessagePath()
     .then @reload
     .then =>
       @trigger('complete')
@@ -152,7 +152,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Branch name'
       callback: (name) ->
-        @repo.cmd "checkout -b #{name}"
+        @atomatiGitRepo.cmd "checkout -b #{name}"
         .catch (error) -> new ErrorView(error)
         .done =>
           @trigger('complete')
@@ -162,7 +162,7 @@ class Repo extends Model
     @trigger 'needInput',
       message: 'Git command'
       callback: (command) =>
-        @repo.cmd command
+        @atomatiGitRepo.cmd command
         .then (output) -> new OutputView(output)
         .catch (error) -> new ErrorView(error)
         .done =>

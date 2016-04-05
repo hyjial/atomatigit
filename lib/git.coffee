@@ -20,6 +20,25 @@ getPath = ->
 class AtomatiGitRepo
   constructor: (@promisedRepo, @atomRepo) ->
 
+  onDidChangeStatus: (callback) ->
+    @atomRepo.onDidChangeStatus callback
+
+  getWorkingDirectory: ->
+    @atomRepo.getWorkingDirectory()
+
+  getReferences: ->
+    @atomRepo.getReferences()
+
+  refreshStatus: ->
+    @atomRepo.refreshStatus()
+
+  cmd: (args...) ->
+    @promisedRepo.cmd args...
+
+  commit: (args...) ->
+    @promisedRepo.commit args...
+
+
 module.exports =
   defaultRepo: -> new Git(getPath())
 
