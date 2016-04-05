@@ -16,9 +16,7 @@ class DiffChunk extends ListItem
   # arguments - {Object}
   #   :header - The diff header used for patch generation as {String}.
   #   :chunk  - The chunk as {String}.
-  initialize: ({@header, chunk}={}, repo, atomRepo) ->
-    @repo = repo
-    @atomRepo = atomRepo
+  initialize: ({@header, chunk}={}, @atomatiGitRepo) ->
     @lines = _.map @splitIntoLines(chunk.trim()), (line) ->
       new DiffLine(line: line)
 
@@ -39,21 +37,21 @@ class DiffChunk extends ListItem
   # Public: Revert this chunk.
   kill: =>
     fs.writeFileSync(@patchPath(), @patch())
-    @repo.cmd "apply --reverse '#{@patchPath()}'"
+    @atomatiGitRepo.cmd "apply --reverse '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Stage this chunk.
   stage: =>
     fs.writeFileSync(@patchPath(), @patch())
-    @repo.cmd "apply --cached '#{@patchPath()}'"
+    @atomatiGitRepo.cmd "apply --cached '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Unstage this chunk.
   unstage: =>
     fs.writeFileSync(@patchPath(), @patch())
-    @repo.cmd "apply --cached --reverse '#{@patchPath()}'"
+    @atomatiGitRepo.cmd "apply --cached --reverse '#{@patchPath()}'"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -62,7 +60,7 @@ class DiffChunk extends ListItem
   # Returns the path as {String}.
   patchPath: ->
     path.join(
-      @atomRepo.getWorkingDirectory(),
+      @atomatiGitRepo.getWorkingDirectory(),
       '.git/atomatigit_diff_patch'
     )
 

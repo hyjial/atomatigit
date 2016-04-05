@@ -9,8 +9,6 @@ class File extends ListItem
   #
   # path - The file path as {String}.
   initialize: (file, @atomatiGitRepo) ->
-    @repo = @atomatiGitRepo.promisedRepo
-    @atomRepo = @atomatiGitRepo.atomRepo
     @set file
     @set diff: false
     @loadDiff()
@@ -44,7 +42,7 @@ class File extends ListItem
   #
   # diff - The diff to set the file diff to as {Diff}.
   setDiff: (diff) =>
-    @sublist = new Diff(diff, @repo, @atomRepo)
+    @sublist = new Diff(diff, @atomatiGitRepo)
     @trigger 'change:diff'
 
   # Public: Toggle the diff visibility.
