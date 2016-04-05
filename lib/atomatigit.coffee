@@ -56,7 +56,7 @@ module.exports =
         p.then (atomatiGitRepo) =>
           if !atomatiGitRepo?
             return @errorNoGitRepo()
-          @repo = new Repo(atomatiGitRepo.promisedRepo, atomatiGitRepo.atomRepo)
+          @repo = new Repo(atomatiGitRepo)
           @repoView = new RepoView(@repo)
           @repoView.InitPromise.then => @repoView.toggle()
 

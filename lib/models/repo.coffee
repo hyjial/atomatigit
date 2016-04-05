@@ -15,9 +15,9 @@ Promise                     = git.defaultRepo().Promise
 # Public: Offers access to core functionality regarding the git repository.
 class Repo extends Model
   # Public: Constructor
-  initialize: (repo, atomRepo)->
-    @atomRepo = atomRepo
-    @repo = repo
+  initialize: (@atomatiGitRepo)->
+    @atomRepo = @atomatiGitRepo.atomRepo
+    @repo = @atomatiGitRepo.promisedRepo
 
     @fileList      = new FileList [], {'repo': @repo}
     @branchList    = new BranchList [], {'repo': @repo}
