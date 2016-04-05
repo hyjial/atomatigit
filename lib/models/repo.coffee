@@ -20,9 +20,9 @@ class Repo extends Model
     @repo = @atomatiGitRepo.promisedRepo
 
     @fileList      = new FileList [], {'atomatiGitRepo': @atomatiGitRepo}
-    @branchList    = new BranchList [], {'repo': @repo}
+    @branchList    = new BranchList [], {'atomatiGitRepo': @atomatiGitRepo}
     @commitList    = new CommitList [], {'repo': @repo, 'atomRepo': @atomRepo}
-    @currentBranch = new CurrentBranch(@headRefsCount() > 0, {'repo': @repo})
+    @currentBranch = new CurrentBranch(@headRefsCount() > 0, {'atomatiGitRepo': @atomatiGitRepo})
 
     @subscriptions = new CompositeDisposable
     @listenTo @branchList, 'repaint', =>

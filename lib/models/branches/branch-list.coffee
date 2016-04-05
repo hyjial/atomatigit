@@ -9,15 +9,15 @@ ErrorView    = require '../../views/error-view'
 class BranchList extends List
   initialize: (models, options) ->
     super
-    @repo = options.repo
+    @atomatiGitRepo = options.atomatiGitRepo
 
   # Public: Reload the branch list.
   reload: ({silent}={}) =>
-    @repo.branches().then (branches) =>
+    @atomatiGitRepo.branches().then (branches) =>
       @reset()
-      _.each branches, (branch) => @add new LocalBranch(branch, {'repo': @repo})
-      @repo.remoteBranches().then (branches) =>
-        _.each branches, (branch) => @add new RemoteBranch(branch, {'repo': @repo})
+      _.each branches, (branch) => @add new LocalBranch(branch, {'atomatiGitRepo': @atomatiGitRepo})
+      @atomatiGitRepo.remoteBranches().then (branches) =>
+        _.each branches, (branch) => @add new RemoteBranch(branch, {'atomatiGitRepo': @atomatiGitRepo})
         @select(@selectedIndex)
         @trigger('repaint') unless silent
     .catch (error) -> new ErrorView(error)

@@ -35,6 +35,12 @@ class AtomatiGitRepo
   add: (file) ->
     @promisedRepo.add file
 
+  branches: ->
+    @promisedRepo.branches()
+
+  checkout: (args...) ->
+    @promisedRepo.checkout args...
+
   checkoutFile: (file) ->
     @promisedRepo.checkoutFile file
 
@@ -44,8 +50,17 @@ class AtomatiGitRepo
   commit: (args...) ->
     @promisedRepo.commit args...
 
+  getCommit: (args...) ->
+    @promisedRepo.getCommit args...
+
   getDiff: (args...) ->
     @promisedRepo.getDiff args...
+
+  remoteBranches: ->
+    @promisedRepo.remoteBranches()
+
+  revParse: (args...) ->
+    @promisedRepo.revParse args...
 
   status: ->
     @promisedRepo.status()

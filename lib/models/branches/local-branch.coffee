@@ -24,10 +24,10 @@ class LocalBranch extends Branch
         @comparison = 'No upstream configured'
         return @trigger 'comparison-loaded'
       tracking_branch = @tracking_branch
-      @repo.cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
+      @atomatiGitRepo.cmd("rev-list --count #{name}@{u}..#{name}").then (output) =>
         number = +output.trim()
         comparison = @getComparisonString number, 'ahead of', tracking_branch if number isnt 0
-        @repo.cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
+        @atomatiGitRepo.cmd("rev-list --count #{name}..#{name}@{u}").then (output) =>
           number = +output.trim()
           if number isnt 0
             comparison += '<br>' if comparison isnt ''
@@ -42,10 +42,10 @@ class LocalBranch extends Branch
   # Returns {Promise}
   getTrackingBranch: (name) =>
     @tracking_branch = ''
-    @repo.cmd("config branch.#{name}.remote").then (output) =>
+    @atomatiGitRepo.cmd("config branch.#{name}.remote").then (output) =>
       output = output.trim()
       remote = "#{output}/"
-      @repo.cmd("config branch.#{name}.merge").then (output) =>
+      @atomatiGitRepo.cmd("config branch.#{name}.merge").then (output) =>
         @tracking_branch = remote + output.trim().replace('refs/heads/', '')
     .catch -> '' # Throws when there's no upstream configured. We handle that elsewhere.
 
@@ -66,7 +66,7 @@ class LocalBranch extends Branch
 
   # Public: Delete the branch.
   delete: =>
-    @repo.cmd 'branch', {D: true}, @getName()
+    @atomatiGitRepo.cmd 'branch', {D: true}, @getName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -77,7 +77,7 @@ class LocalBranch extends Branch
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    @repo.checkout @localName()
+    @atomatiGitRepo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
@@ -85,7 +85,7 @@ class LocalBranch extends Branch
   #
   # remote - The remote to push to as {String}.
   push: (remote='origin') =>
-    @repo.cmd 'push', [remote, @getName()]
+    @atomatiGitRepo.cmd 'push', [remote, @getName()]
     .then =>
       @trigger 'update'
       new OutputView('Pushing to remote repository successful')

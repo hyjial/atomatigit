@@ -10,7 +10,7 @@ class RemoteBranch extends Branch
   #
   # Returns the [Description] as {String}.
   delete: =>
-    @repo.cmd "push -f #{@remoteName()} :#{@localName()}"
+    @atomatiGitRepo.cmd "push -f #{@remoteName()} :#{@localName()}"
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 

@@ -13,8 +13,8 @@ class CurrentBranch extends LocalBranch
 
   # Public: Reload the branch HEAD.
   reload: ({silent}={}) =>
-    @repo.revParse('HEAD', 'abbrev-ref': true).then (@name) =>
-      @repo.getCommit('HEAD').then (gitCommit) =>
+    @atomatiGitRepo.revParse('HEAD', 'abbrev-ref': true).then (@name) =>
+      @atomatiGitRepo.getCommit('HEAD').then (gitCommit) =>
         @commit = new Commit(gitCommit)
         if !silent
           @trigger 'repaint'

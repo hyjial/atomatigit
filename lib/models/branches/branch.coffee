@@ -5,7 +5,7 @@ ErrorView = require '../../views/error-view'
 class Branch extends ListItem
   initialize: (attr, options) ->
     super
-    @repo = options.repo
+    @atomatiGitRepo = options.atomatiGitRepo
 
   # Public: Return the property 'name'.
   #
@@ -59,7 +59,7 @@ class Branch extends ListItem
   #
   # callback - The callback as {Function}.
   checkout: (callback) =>
-    @repo.checkout @localName()
+    @atomatiGitRepo.checkout @localName()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
