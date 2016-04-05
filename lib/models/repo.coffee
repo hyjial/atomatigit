@@ -16,12 +16,9 @@ Promise                     = git.defaultRepo().Promise
 class Repo extends Model
   # Public: Constructor
   initialize: (@atomatiGitRepo)->
-    @atomRepo = @atomatiGitRepo.atomRepo
-    @repo = @atomatiGitRepo.promisedRepo
-
     @fileList      = new FileList [], {'atomatiGitRepo': @atomatiGitRepo}
     @branchList    = new BranchList [], {'atomatiGitRepo': @atomatiGitRepo}
-    @commitList    = new CommitList [], {'repo': @repo, 'atomRepo': @atomRepo}
+    @commitList    = new CommitList [], {'atomatiGitRepo': @atomatiGitRepo}
     @currentBranch = new CurrentBranch(@headRefsCount() > 0, {'atomatiGitRepo': @atomatiGitRepo})
 
     @subscriptions = new CompositeDisposable

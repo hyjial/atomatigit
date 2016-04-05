@@ -15,10 +15,8 @@ class Commit extends ListItem
   # Public: Constructor.
   #
   # gitCommit - The promisedgit commit object as {Object}.
-  initialize: (gitCommit, repo, atomRepo) ->
+  initialize: (gitCommit, @atomatiGitRepo) ->
     super()
-    @atomRepo = atomRepo
-    @repo = repo
     if not _.isString(gitCommit) and _.isObject(gitCommit)
       @set 'author', gitCommit.author
       @set 'id', gitCommit.ref
@@ -87,26 +85,26 @@ class Commit extends ListItem
 
   # Internal: Reset to this commit.
   reset: =>
-    @repo.reset @commitID()
+    @atomatiGitRepo.reset @commitID()
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Hard reset to this commit.
   hardReset: =>
-    @repo.reset @commitID(), {hard: true}
+    @atomatiGitRepo.reset @commitID(), {hard: true}
     .then => @trigger 'update'
     .catch (error) -> new ErrorView(error)
 
   # Public: Show this commit.
   showCommit: =>
     if not @has('showMessage')
-      @repo.show @commitID(), format: 'full'
+      @atomatiGitRepo.show @commitID(), format: 'full'
       .then (data) =>
         @set('showMessage', @unicodify(data))
         @showCommit()
       .catch (error) -> new ErrorView(error)
     else
-      gitPath = @atomRepo.getPath()
+      gitPath = @atomatiGitRepo.getPath()
       diffPath = path.join(gitPath, ".git/#{@commitID()}")
       fs.writeFileSync diffPath, @get('showMessage')
       atom.workspace.open(diffPath).then (editor) ->

@@ -23,6 +23,9 @@ class AtomatiGitRepo
   onDidChangeStatus: (callback) ->
     @atomRepo.onDidChangeStatus callback
 
+  getPath: ->
+    @atomRepo.getPath()
+
   getWorkingDirectory: ->
     @atomRepo.getWorkingDirectory()
 
@@ -56,11 +59,20 @@ class AtomatiGitRepo
   getDiff: (args...) ->
     @promisedRepo.getDiff args...
 
+  log: (args...) ->
+    @promisedRepo.log args...
+
   remoteBranches: ->
     @promisedRepo.remoteBranches()
 
+  reset: (args...) ->
+    @promisedRepo.reset args...
+
   revParse: (args...) ->
     @promisedRepo.revParse args...
+
+  show: (args...) ->
+    @promisedRepo.show args...
 
   status: ->
     @promisedRepo.status()
